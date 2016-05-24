@@ -1,5 +1,6 @@
 import Drawable from '../drawable';
 import Instance from '../instance';
+import Consts from '../consts';
 
 export default class Block extends Drawable {
 	// i: Position from the top
@@ -38,5 +39,32 @@ export default class Block extends Drawable {
 			this.size.height*1);
 
 		this.stage.addChild(this.element);
+	}
+
+	checkCollision(x, y){
+		let r = Consts.playerRadius;
+
+		// Center of circle
+		if (this.arePointsInside(x, y)) return true;
+
+		// Left, top, right, bottom
+		if (this.arePointsInside(x-r, y)) return true;
+		if (this.arePointsInside(x, y-r)) return true;
+		if (this.arePointsInside(x+r, y)) return true;
+		if (this.arePointsInside(x, y+r)) return true;
+
+		// TL, TR, BR, BL
+		if (this.arePointsInside(x-r, y-r)) return true;
+		if (this.arePointsInside(x+r, y-r)) return true;
+		if (this.arePointsInside(x+r, y+r)) return true;
+		if (this.arePointsInside(x-r, y+r)) return true;
+
+		return false;
+	}
+
+	arePointsInside(x, y){
+
+		return (x >= this.bounds.left && x <= this.bounds.right &&
+			y >= this.bounds.top && y <= this.bounds.bottom);
 	}
 }
