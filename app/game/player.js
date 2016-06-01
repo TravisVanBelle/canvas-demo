@@ -82,8 +82,6 @@ export default class Player {
 			}
 		}
 
-		console.log('got here');
-
 		this.element.x = xTo;
 		this.element.y = yTo;
 

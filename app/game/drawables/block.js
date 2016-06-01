@@ -1,15 +1,12 @@
-import Drawable from '../drawable';
 import Instance from '../instance';
 import Consts from '../consts';
 
-export default class Block extends Drawable {
+export default class Block {
 	// i: Position from the top
 	// j: Position from the left
 	// width: The width of the block
 	// height: The height of the block
 	constructor(i, j, width, height){
-		super();
-
 		this.stage = Instance.getStage();
 
 		this.size = {

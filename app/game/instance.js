@@ -1,6 +1,7 @@
 import GMap from './gmap';
 import Player from './player';
 import Events from './events';
+import _ from 'lodash/lodash';
 
 let instance = null;
 
@@ -24,6 +25,7 @@ export default class Instance {
 			d: false,
 			s: false
 		};
+		this.socket = null;
 
 		this.canvas = canvas;
 		this.stage = new createjs.Stage(this.canvas);
@@ -36,16 +38,34 @@ export default class Instance {
 		bg.graphics.beginFill("#E0AB50").drawRect(0,0,2000,1000);
 		this.stage.addChild(bg);
 
+		// Draw map
 		this.map = new GMap();
 		this.map.drawMap();
 		this.stage.update();
 
+		// Create player
 		this.player = new Player();
 		this.player.draw(100, 100);
 		this.stage.update();
 
+		// Register events
 		this.events = new Events();
 
+		this.socket = io('http://localhost:3000');
+		/*this.socket.emit('join', {
+			id: 'roomid'
+		});
+
+		this.d = _.throttle(function(msg){
+			console.log('emitting');
+			this.socket.emit('move', {
+				id: 'roomid'
+			});
+		}, 30);
+
+		this.socket.on('stcmove', function(msg){
+			console.log(msg);
+		});*/
 	}
 
 	move(x, y) {
