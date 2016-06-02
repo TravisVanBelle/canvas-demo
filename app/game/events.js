@@ -1,4 +1,5 @@
 import Instance from './instance';
+import Utils from './utils';
 
 export default class Events {
 
@@ -9,6 +10,11 @@ export default class Events {
 				if (this.instance.keys.w) this.instance.move(0, -1);
 				if (this.instance.keys.a) this.instance.move(-1, 0);
 				if (this.instance.keys.s) this.instance.move(0, 1);
+
+				this.socketData.x = this.instance.player.x;
+				this.socketData.y = this.instance.player.y;
+
+				this.events.updateNetwork();
 			},
 
 			dDown: () => {
@@ -54,9 +60,14 @@ export default class Events {
 				this.instance.keys.s = false;
 				this.instance.getPlayer().resetYVelocity();
 			},
+
+			updateNetwork: () => {
+				this.socket.emit('tickUpdate', this.socketData);
+			}
 		};
 
 		this.instance = Instance.getInstance();
+		this.socket = this.instance.socket;
 
 		// Create event ticker via easeljs
 		this.ticker = createjs.Ticker;
@@ -88,7 +99,58 @@ export default class Events {
 			'on_keydown': this.events.sDown,
 			'on_keyup': this.events.sUp
 		});
+
+
+		// Create networking events via socket.io object
+		this.socketData = {
+			uuid: Utils.guid(),
+			roomId: 'testRoom',
+			x: this.instance.player.x,
+			y: this.instance.player.y
+		};
+
+		this.socket.on('timeout', () => {
+			console.log('connection error');
+		});
+
+		this.socket.on('connect', () => {
+			this.socket.emit('join', this.socketData);
+		});
+
+		this.socket.on('allUsers', (msg) => {
+			console.log('All Users');
+			console.log(msg);
+
+			msg.forEach((e) => {
+				this.instance.createOther(e.uuid, e.x, e.y);
+				this.instance.setOtherLocation(e.uuid, e.x, e.y);
+			});
+		});
+
+		this.socket.on('newUser', (msg) => {
+			console.log('New User');
+			console.log(msg);
+
+			if (msg.uuid !== this.socketData.uuid){
+				this.instance.createOther(msg.uuid, msg.x, msg.y);
+			}
+			
+		});
+
+		this.socket.on('gameUpdate', (msg) => {
+			console.log(msg);
+			msg.forEach((other) => {
+				if (other.uuid === this.socketData.uuid) return;
+
+				this.instance.setOtherLocation(other.uuid, other.x, other.y);
+			});
+		});
+
+
+
+
+
+
+
 	}
-
-
 }

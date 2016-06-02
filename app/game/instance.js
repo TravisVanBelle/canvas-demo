@@ -1,6 +1,7 @@
 import GMap from './gmap';
 import Player from './player';
 import Events from './events';
+import Other from './other';
 import _ from 'lodash/lodash';
 
 let instance = null;
@@ -26,6 +27,7 @@ export default class Instance {
 			s: false
 		};
 		this.socket = null;
+		this.others = [];
 
 		this.canvas = canvas;
 		this.stage = new createjs.Stage(this.canvas);
@@ -48,10 +50,14 @@ export default class Instance {
 		this.player.draw(100, 100);
 		this.stage.update();
 
+		// Create socket
+		this.socket = io('http://localhost:3000');
+
 		// Register events
 		this.events = new Events();
 
-		this.socket = io('http://localhost:3000');
+
+
 		/*this.socket.emit('join', {
 			id: 'roomid'
 		});
@@ -75,6 +81,22 @@ export default class Instance {
 
 	getPlayer() {
 		return instance.player;
+	}
+
+	setOtherLocation(uuid, x, y){
+		this.others.forEach((other) => {
+			if (other.uuid === uuid){
+				other.setLocation(x, y);
+			}
+		});
+	}
+
+	createOther(uuid, x, y) {
+		let newOther = new Other(uuid, x, y);
+		newOther.draw();
+		newOther.setLocation(x, y);
+
+		this.others.push(newOther);
 	}
 
 	static getInstance(){

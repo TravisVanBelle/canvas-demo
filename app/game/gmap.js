@@ -1,4 +1,4 @@
-import Block from './drawables/block'
+import Block from './drawables/block';
 
 export default class GMap {
 	constructor(){
