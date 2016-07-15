@@ -1,7 +1,6 @@
 import GMap from './gmap';
-import Player from './player';
+import EntityManager from './entityManager';
 import Events from './events';
-import Other from './other';
 import _ from 'lodash/lodash';
 
 let instance = null;
@@ -18,7 +17,7 @@ export default class Instance {
 		// Member variables
 		this.canvas = null;
 		this.stage = null;
-		this.player = null;
+		this.entityManager = null;
 		this.map = null;
 		this.keys = {
 			w: false,
@@ -27,7 +26,6 @@ export default class Instance {
 			s: false
 		};
 		this.socket = null;
-		this.others = [];
 
 		this.canvas = canvas;
 		this.stage = new createjs.Stage(this.canvas);
@@ -45,59 +43,17 @@ export default class Instance {
 		this.map.drawMap();
 		this.stage.update();
 
-		// Create player
-		this.player = new Player();
-		this.player.draw(100, 100);
-		this.stage.update();
+		// Create Entity Manager
+		this.entityManager = new EntityManager();
+		this.entityManager.createPlayer();
 
 		// Create socket
 		this.socket = io('http://localhost:3000');
 
 		// Register events
 		this.events = new Events();
-
-
-
-		/*this.socket.emit('join', {
-			id: 'roomid'
-		});
-
-		this.d = _.throttle(function(msg){
-			console.log('emitting');
-			this.socket.emit('move', {
-				id: 'roomid'
-			});
-		}, 30);
-
-		this.socket.on('stcmove', function(msg){
-			console.log(msg);
-		});*/
 	}
 
-	move(x, y) {
-		this.player.move(x, y);
-		this.stage.update();
-	}
-
-	getPlayer() {
-		return instance.player;
-	}
-
-	setOtherLocation(uuid, x, y){
-		this.others.forEach((other) => {
-			if (other.uuid === uuid){
-				other.setLocation(x, y);
-			}
-		});
-	}
-
-	createOther(uuid, x, y) {
-		let newOther = new Other(uuid, x, y);
-		newOther.draw();
-		newOther.setLocation(x, y);
-
-		this.others.push(newOther);
-	}
 
 	static getInstance(){
 		if (!instance){
@@ -105,6 +61,14 @@ export default class Instance {
 		}
 
 		return instance;
+	}
+
+	static getEntityManager(){
+		if (!instance){
+			console.log('Instance not defined');
+		}
+
+		return instance.entityManager;
 	}
 
 	// Returns the stage for drawing

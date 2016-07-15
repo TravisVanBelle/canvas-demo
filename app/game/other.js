@@ -26,6 +26,11 @@ export default class Other {
 		this.stage.update();
 	}
 
+	undraw() {
+		this.stage.removeChild(this.element);
+		this.stage.update();
+	}
+
 	setLocation(x, y){
 		this.element.x = x;
 		this.element.y = y;

@@ -36,7 +36,6 @@ export default class Player {
 		if (collision) {
 			if (x === 1){
 				for (let i=x*this.xVelocity-1; i>-1; i--){
-					console.log(i);
 					xTo = this.element.x + i;
 
 					collision = Instance.getInstance().map.checkMovementCollision(xTo, yTo);

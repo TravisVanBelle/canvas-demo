@@ -1,5 +1,6 @@
 import Instance from './instance';
 import Utils from './utils';
+import EntityManager from './entityManager';
 import _ from 'lodash';
 
 export default class Events {
@@ -7,16 +8,18 @@ export default class Events {
 	constructor(){
 		this.events = {
 			tickHandler: () => {
-				if (this.instance.keys.d) this.instance.move(1, 0);
-				if (this.instance.keys.w) this.instance.move(0, -1);
-				if (this.instance.keys.a) this.instance.move(-1, 0);
-				if (this.instance.keys.s) this.instance.move(0, 1);
+				if (this.ticker.paused) return;
+
+				if (this.instance.keys.d) this.entityManager.move(1, 0);
+				if (this.instance.keys.w) this.entityManager.move(0, -1);
+				if (this.instance.keys.a) this.entityManager.move(-1, 0);
+				if (this.instance.keys.s) this.entityManager.move(0, 1);
 
 				let newSocketData = {
 					uuid: this.socketData.uuid,
 					position: {
-						x: this.instance.player.x,
-						y: this.instance.player.y
+						x: this.entityManager.player.x,
+						y: this.entityManager.player.y
 					}
 				};
 
@@ -37,7 +40,7 @@ export default class Events {
 
 			dUp: () => {
 				this.instance.keys.d = false;
-				this.instance.getPlayer().resetXVelocity();
+				this.entityManager.getPlayer().resetXVelocity();
 			},
 
 			wDown: () => {
@@ -48,7 +51,7 @@ export default class Events {
 
 			wUp: () => {
 				this.instance.keys.w = false;
-				this.instance.getPlayer().resetYVelocity();
+				this.entityManager.getPlayer().resetYVelocity();
 			},
 
 			aDown: () => {
@@ -59,7 +62,7 @@ export default class Events {
 
 			aUp: () => {
 				this.instance.keys.a = false;
-				this.instance.getPlayer().resetXVelocity();
+				this.entityManager.getPlayer().resetXVelocity();
 			},
 
 			sDown: () => {
@@ -70,7 +73,11 @@ export default class Events {
 
 			sUp: () => {
 				this.instance.keys.s = false;
-				this.instance.getPlayer().resetYVelocity();
+				this.entityManager.getPlayer().resetYVelocity();
+			},
+
+			pUp: () => {
+				this.ticker.paused = !this.ticker.paused;
 			},
 
 			updateNetwork: () => {
@@ -78,16 +85,35 @@ export default class Events {
 			},
 
 			getUpdate: (data) => {
-				console.log(data);
+				let diffs = Utils.diff(this.gameData.userData, data.userData);
+				
+				diffs.forEach((diff) => {
+					if (diff.value.uuid === this.socketData.uuid) return;
+
+					if (diff.type === 'added') {
+						this.entityManager.createOther(diff.value.uuid, diff.value.position.x, diff.value.position.y);
+					}
+
+					if (diff.type === 'removed') {
+						this.entityManager.removeOther(diff.value.uuid);
+					}
+
+					if (diff.type === 'diffed') {
+						this.entityManager.setOtherLocation(diff.value.uuid, diff.value.position.x, diff.value.position.y);
+					}
+				});
+
+				this.gameData.userData = data.userData;
 			}
 		};
 
 		this.instance = Instance.getInstance();
+		this.entityManager = Instance.getEntityManager();
 		this.socket = this.instance.socket;
 
 		// Create event ticker via easeljs
 		this.ticker = createjs.Ticker;
-		this.ticker.setFPS(15);
+		this.ticker.setFPS(30);
 		this.ticker.addEventListener('tick', this.events.tickHandler);
 
 		// Create events for keypress via keypress.js
@@ -116,16 +142,23 @@ export default class Events {
 			'on_keyup': this.events.sUp
 		});
 
+		this.keypressListener.register_combo({
+			'keys': 'p',
+			'on_keyup': this.events.pUp
+		});
+
 		// Create networking events via socket.io object
 		this.socketData = {
 			uuid: Utils.guid(),
 			position: {
-				x: this.instance.player.x,
-				y: this.instance.player.y
+				x: this.entityManager.player.x,
+				y: this.entityManager.player.y
 			}
 		};
 
-		this.gameData = {};
+		this.gameData = {
+			userData: {}
+		};
 
 		this.socket.on('timeout', () => {
 			console.log('connection error');
