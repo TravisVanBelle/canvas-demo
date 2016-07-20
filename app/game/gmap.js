@@ -74,10 +74,7 @@ export default class GMap {
 		}*/
 	}
 
-	checkMovementCollision(x, y){
-		let collision = false;
-
-		// We need to get the 4 blocks that the player may collide with
+	getSurroundingBlocks(x, y){
 		let xBlock = [];
 		let yBlock = [];
 
@@ -88,6 +85,17 @@ export default class GMap {
 		yBlock[0] = Math.ceil(y / this.mapJson.blockHeight);
 		yBlock[1] = yBlock[0] - 1;
 		yBlock[2] = yBlock[0] - 2;
+
+		return {
+			xBlock, yBlock
+		};
+	}
+
+	checkMovementCollision(x, y){
+		let collision = false;
+
+		// We need to get the 6 blocks that the player may collide with
+		let { xBlock, yBlock } = this.getSurroundingBlocks(x, y);
 
 		for (let i=0; i<3; i++){
 			for (let j=0; j<3; j++){
