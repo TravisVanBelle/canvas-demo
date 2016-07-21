@@ -18,7 +18,18 @@ export default class PhysicsManager {
 			};
 		});
 
-		this.world = Physics(this.registerWorld);
+		this.world = Physics({
+			sleepDisabled: true,
+			timeStep: 6
+		}, this.registerWorld);
+	}
+
+	applyFriction() {
+		let bodies = this.world.getBodies();
+
+		bodies.forEach((body) => {
+			body.state.vel.set(body.state.vel.x * 0.9, body.state.vel.y * 0.9);
+		});
 	}
 
 	registerWorld(world) {
@@ -30,9 +41,6 @@ export default class PhysicsManager {
 			width: viewWidth,
 			height: viewHeight,
 			meta: false, // don't display meta data
-			resize: () => {
-				console.log('abc');
-			}
 		});
 
 		renderer.el.width = viewWidth;
@@ -56,7 +64,7 @@ export default class PhysicsManager {
 		}));
 
 		world.add( Physics.behavior('body-impulse-response') );
-		world.add( Physics.behavior('constant-acceleration'));
+		//world.add( Physics.behavior('constant-acceleration'));
 		world.add( Physics.behavior('body-collision-detection') );
 		world.add( Physics.behavior('sweep-prune') );
 

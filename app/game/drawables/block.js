@@ -24,7 +24,7 @@ export default class Block {
 		this.element = Physics.body('rectangle', {
 			x: this.bounds.left + this.size.width/2,
 			y: this.bounds.top + this.size.height/2,
-			width: this.size.width,
+			width: this.size.width+1,
 			height: this.size.height,
 			styles: {
 				fillStyle: '#4E728F'

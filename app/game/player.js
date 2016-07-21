@@ -7,8 +7,12 @@ export default class Player {
 		this.element = Physics.body('non-rotating-circle', {
 			x: 100,
 			y: 100,
-			radius: 15,
+			radius: Consts.playerRadius,
+			restitution: Consts.playerRestitution,
+			cof: 0,
+			mass: 1.0,
 			styles: {
+				name: 'test',
 				fillStyle: '#555555',
 			},
 		});
@@ -17,7 +21,4 @@ export default class Player {
 	draw() {
 		PhysicsManager.getPM().world.add(this.element);
 	}
-
-
-
 }

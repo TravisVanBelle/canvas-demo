@@ -11,5 +11,7 @@ export default {
 	// The radius of the player's circle
 	playerRadius: 15,
 
+	playerRestitution: 0.2,
+
 	networking: true
 };

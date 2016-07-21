@@ -4,18 +4,16 @@ import Consts from './consts';
 
 export default class Other {
 	constructor(uuid, x, y) {
-		this.color = '#eee';
-		this.x = 0;
-		this.y = 0;
-
 		this.uuid = uuid;
 
-		this.element = Physics.body('circle', {
+		this.element = Physics.body('non-rotating-circle', {
 			x: 100,
 			y: 100,
-			radius: 15,
+			radius: Consts.playerRadius,
+			mass: 1.0,
+			restitution: Consts.playerRestitution,
 			styles: {
-				fillStyle: '#555555'
+				fillStyle: '#555555',
 			},
 		});
 	}
@@ -29,11 +27,9 @@ export default class Other {
 	}
 
 	setLocation(x, y){
-		this.element.x = x;
-		this.element.y = y;
-
-		this.x = x;
-		this.y = y;
+		console.log(x, y);
+		//console.log(this.element.state.pos);
+		this.element.state.pos.set(x, y);
 	}
 
 }

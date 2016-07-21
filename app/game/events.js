@@ -10,8 +10,8 @@ export default class Events {
 	constructor(){
 		this.events = {
 			tickHandler: (time, dt) => {
-				if (this.ticker.paused) return;
 
+				this.physicsManager.applyFriction();
 				this.physicsManager.world.step(time);
 
 				if (this.instance.keys.d) this.entityManager.move(1, 0);
@@ -21,15 +21,11 @@ export default class Events {
 
 				let newSocketData = {
 					uuid: this.socketData.uuid,
-					position: {
-						x: this.entityManager.player.x,
-						y: this.entityManager.player.y
-					}
+					position: this.entityManager.getPlayerPosition()
 				};
 
 				if (!_.isEqual(newSocketData, this.socketData)){
 					this.socketData = newSocketData;
-
 					this.events.updateNetwork();
 				}
 
@@ -39,50 +35,43 @@ export default class Events {
 
 			dDown: () => {
 				if (this.instance.keys.d === true) return;
-
 				this.instance.keys.d = true;
 			},
 
 			dUp: () => {
 				this.instance.keys.d = false;
-				this.entityManager.getPlayer().resetXVelocity();
 			},
 
 			wDown: () => {
 				if (this.instance.keys.w === true) return;
-
 				this.instance.keys.w = true;
 			},
 
 			wUp: () => {
 				this.instance.keys.w = false;
-				this.entityManager.getPlayer().resetYVelocity();
 			},
 
 			aDown: () => {
 				if (this.instance.keys.a === true) return;
-
 				this.instance.keys.a = true;
 			},
 
 			aUp: () => {
 				this.instance.keys.a = false;
-				this.entityManager.getPlayer().resetXVelocity();
 			},
 
 			sDown: () => {
 				if (this.instance.keys.s === true) return;
-
 				this.instance.keys.s = true;
 			},
 
 			sUp: () => {
 				this.instance.keys.s = false;
-				this.entityManager.getPlayer().resetYVelocity();
+				//this.entityManager.getPlayer().resetYVelocity();
 			},
 
 			pUp: () => {
-				this.ticker.paused = !this.ticker.paused;
+				//this.ticker.paused = !this.ticker.paused;
 			},
 
 			updateNetwork: () => {
@@ -110,6 +99,19 @@ export default class Events {
 				});
 
 				this.gameData.userData = data.userData;
+			},
+
+			mouseClick: (data) => {
+				this.entityManager.createBullet(data.x, data.y);
+			},
+
+			collision: (data) => {
+				if (this.entityManager.isBullet(data.bodyA.uid)) {
+					this.entityManager.removeBullet(data.bodyA.uid);
+				}
+				if (this.entityManager.isBullet(data.bodyB.uid)) {
+					this.entityManager.removeBullet(data.bodyB.uid);
+				}
 			}
 		};
 
@@ -117,11 +119,6 @@ export default class Events {
 		this.instance = Instance.getInstance();
 		this.entityManager = Instance.getEntityManager();
 		this.socket = this.instance.socket;
-
-		// Create event ticker via easeljs
-		this.ticker = createjs.Ticker;
-		this.ticker.setFPS(30);
-		this.ticker.addEventListener('tick', this.events.tickHandler);
 
 		// Subscribe to the tick handler
 		Physics.util.ticker.on(this.events.tickHandler);
@@ -160,13 +157,32 @@ export default class Events {
 			'on_keyup': this.events.pUp
 		});
 
+		document.getElementById('viewport').onclick = (e) => {
+			let canvasSize = document.getElementById('viewport').getBoundingClientRect();
+
+			this.events.mouseClick({
+				x: (e.clientX / canvasSize.width) * 2000,
+				y: (e.clientY / canvasSize.height) * 1000
+			});
+		}
+
+		this.physicsManager.world.on('collisions:detected', (data) => {
+			var c;
+			for (var i = 0, l = data.collisions.length; i < l; i++){
+				c = data.collisions[ i ];
+
+				this.events.collision({
+					topic: 'collision-pair',
+					bodyA: c.bodyA,
+					bodyB: c.bodyB
+				});
+			}
+		});
+
 		// Create networking events via socket.io object
 		this.socketData = {
 			uuid: Utils.guid(),
-			position: {
-				x: this.entityManager.player.x,
-				y: this.entityManager.player.y
-			}
+			position: this.entityManager.getPlayerPosition()
 		};
 
 		this.gameData = {
@@ -174,6 +190,7 @@ export default class Events {
 		};
 
 		if (!Consts.networking) return;
+
 		this.socket.on('timeout', () => {
 			console.log('connection error');
 		});
