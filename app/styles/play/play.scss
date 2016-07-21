@@ -4,4 +4,8 @@ canvas {
 	display: inline;
 
 	width: 100%;
+
+	&:first-child {
+		display: none;
+	}
 }

@@ -1,4 +1,5 @@
 import Instance from '../instance';
+import PhysicsManager from '../physicsManager';
 import Consts from '../consts';
 
 export default class Block {
@@ -7,8 +8,6 @@ export default class Block {
 	// width: The width of the block
 	// height: The height of the block
 	constructor(i, j, width, height){
-		this.stage = Instance.getStage();
-
 		this.size = {
 			width: width,
 			height: height
@@ -22,46 +21,19 @@ export default class Block {
 			right: (j+1)*this.size.width
 		};
 
-		this.element = new createjs.Shape();
+		this.element = Physics.body('rectangle', {
+			x: this.bounds.left + this.size.width/2,
+			y: this.bounds.top + this.size.height/2,
+			width: this.size.width,
+			height: this.size.height,
+			styles: {
+				fillStyle: '#4E728F'
+			},
+			treatment: 'kinematic'
+		});
 	}
 
 	draw(){
-		let leftOffset = 0;
-		let topOffset = 0;
-
-		this.element.graphics.beginFill("#0E1A23").drawRect(
-			this.bounds.left*1 - leftOffset,
-			this.bounds.top*1 - topOffset,
-			this.size.width*1,
-			this.size.height*1);
-
-		this.stage.addChild(this.element);
-	}
-
-	checkCollision(x, y){
-		let r = Consts.playerRadius;
-
-		// Center of circle
-		if (this.arePointsInside(x, y)) return true;
-
-		// Left, top, right, bottom
-		if (this.arePointsInside(x-r, y)) return true;
-		if (this.arePointsInside(x, y-r)) return true;
-		if (this.arePointsInside(x+r, y)) return true;
-		if (this.arePointsInside(x, y+r)) return true;
-
-		// TL, TR, BR, BL
-		if (this.arePointsInside(x-r, y-r)) return true;
-		if (this.arePointsInside(x+r, y-r)) return true;
-		if (this.arePointsInside(x+r, y+r)) return true;
-		if (this.arePointsInside(x-r, y+r)) return true;
-
-		return false;
-	}
-
-	arePointsInside(x, y){
-
-		return (x >= this.bounds.left && x <= this.bounds.right &&
-			y >= this.bounds.top && y <= this.bounds.bottom);
+		PhysicsManager.getPM().world.add(this.element);
 	}
 }

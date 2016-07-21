@@ -6,13 +6,11 @@ export default class EntityManager {
 	constructor() {
 		this.player = null;
 		this.others = [];
-		this.stage = Instance.getInstance().stage;
 	}
 
 	createPlayer() {
 		this.player = new Player();
 		this.player.draw(100, 100);
-		this.stage.update();
 	}
 
 	getPlayer() {
@@ -21,7 +19,6 @@ export default class EntityManager {
 
 	move(x, y) {
 		this.player.move(x, y);
-		this.stage.update();
 	}
 
 	setOtherLocation(uuid, x, y){

@@ -1,4 +1,5 @@
 import Instance from './instance';
+import PhysicsManager from './physicsManager';
 import Consts from './consts';
 
 export default class Other {
@@ -9,26 +10,22 @@ export default class Other {
 
 		this.uuid = uuid;
 
-		this.stage = Instance.getStage();
-
-		this.element = new createjs.Shape();
+		this.element = Physics.body('circle', {
+			x: 100,
+			y: 100,
+			radius: 15,
+			styles: {
+				fillStyle: '#555555'
+			},
+		});
 	}
 
 	draw() {
-		this.element.graphics.beginFill(this.color).drawCircle(
-			0, 0, Consts.playerRadius);
-
-		this.element.x += this.x;
-		this.element.y += this.y;
-
-		this.stage.addChild(this.element);
-
-		this.stage.update();
+		PhysicsManager.getPM().world.add(this.element);
 	}
 
 	undraw() {
-		this.stage.removeChild(this.element);
-		this.stage.update();
+		PhysicsManager.getPM().world.remove(this.element);
 	}
 
 	setLocation(x, y){
@@ -37,8 +34,6 @@ export default class Other {
 
 		this.x = x;
 		this.y = y;
-
-		this.stage.update();
 	}
 
 }

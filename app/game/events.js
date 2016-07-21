@@ -1,14 +1,18 @@
 import Instance from './instance';
 import Utils from './utils';
 import EntityManager from './entityManager';
+import PhysicsManager from './physicsManager';
+import Consts from './consts';
 import _ from 'lodash';
 
 export default class Events {
 
 	constructor(){
 		this.events = {
-			tickHandler: () => {
+			tickHandler: (time, dt) => {
 				if (this.ticker.paused) return;
+
+				this.physicsManager.world.step(time);
 
 				if (this.instance.keys.d) this.entityManager.move(1, 0);
 				if (this.instance.keys.w) this.entityManager.move(0, -1);
@@ -29,6 +33,7 @@ export default class Events {
 					this.events.updateNetwork();
 				}
 
+				if (!this.socket) return;
 				this.socket.emit('requestUpdate', {});
 			},
 
@@ -81,6 +86,7 @@ export default class Events {
 			},
 
 			updateNetwork: () => {
+				if (!this.socket) return;
 				this.socket.emit('serverUpdate', this.socketData);
 			},
 
@@ -107,6 +113,7 @@ export default class Events {
 			}
 		};
 
+		this.physicsManager = PhysicsManager.getPM();
 		this.instance = Instance.getInstance();
 		this.entityManager = Instance.getEntityManager();
 		this.socket = this.instance.socket;
@@ -115,6 +122,12 @@ export default class Events {
 		this.ticker = createjs.Ticker;
 		this.ticker.setFPS(30);
 		this.ticker.addEventListener('tick', this.events.tickHandler);
+
+		// Subscribe to the tick handler
+		Physics.util.ticker.on(this.events.tickHandler);
+
+		// Start the ticker
+		Physics.util.ticker.start();
 
 		// Create events for keypress via keypress.js
 		this.keypressListener = new window.keypress.Listener();
@@ -160,6 +173,7 @@ export default class Events {
 			userData: {}
 		};
 
+		if (!Consts.networking) return;
 		this.socket.on('timeout', () => {
 			console.log('connection error');
 		});

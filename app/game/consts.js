@@ -9,5 +9,7 @@ export default {
 	acceleration: 1,
 
 	// The radius of the player's circle
-	playerRadius: 15
+	playerRadius: 15,
+
+	networking: true
 };

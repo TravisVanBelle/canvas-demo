@@ -1,4 +1,5 @@
 import Block from './drawables/block';
+import Instance from './instance';
 
 export default class GMap {
 	constructor(){
@@ -113,26 +114,3 @@ export default class GMap {
 		return collision;
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
