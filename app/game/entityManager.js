@@ -10,6 +10,16 @@ export default class EntityManager {
 		this.bullets = [];
 	}
 
+	applyFriction() {
+		this.player.element.state.vel.set(this.player.element.state.vel.x * 0.9,
+				this.player.element.state.vel.y * 0.9);
+
+		this.others.forEach((other) => {
+			other.element.state.vel.set(other.element.state.vel.x * 0.9,
+					other.element.state.vel.y * 0.9);
+		})
+	}
+
 	createPlayer() {
 		this.player = new Player();
 		this.player.draw(100, 100);
@@ -20,6 +30,17 @@ export default class EntityManager {
 
 		this.bullets[b.element.uid] = b;
 		b.draw();
+
+		return b;
+	}
+
+	createOtherBullet(px, py, x, y) {
+		let b = new Bullet(px, py, x, y);
+
+		this.bullets[b.element.uid] = b;
+		b.draw();
+
+		return b;
 	}
 
 	isBullet(uid) {
@@ -28,6 +49,7 @@ export default class EntityManager {
 
 	removeBullet(uid) {
 		this.bullets[uid].undraw();
+		delete this.bullets[uid];
 	}
 
 	getPlayer() {

@@ -10,8 +10,7 @@ export default class Events {
 	constructor(){
 		this.events = {
 			tickHandler: (time, dt) => {
-
-				this.physicsManager.applyFriction();
+				this.entityManager.applyFriction(); 
 				this.physicsManager.world.step(time);
 
 				if (this.instance.keys.d) this.entityManager.move(1, 0);
@@ -21,7 +20,7 @@ export default class Events {
 
 				let newSocketData = {
 					uuid: this.socketData.uuid,
-					position: this.entityManager.getPlayerPosition()
+					position: this.entityManager.getPlayerPosition(),
 				};
 
 				if (!_.isEqual(newSocketData, this.socketData)){
@@ -67,11 +66,14 @@ export default class Events {
 
 			sUp: () => {
 				this.instance.keys.s = false;
-				//this.entityManager.getPlayer().resetYVelocity();
 			},
 
 			pUp: () => {
-				//this.ticker.paused = !this.ticker.paused;
+				if (Physics.util.ticker.isActive()){
+					Physics.util.ticker.stop();
+				} else {
+					Physics.util.ticker.start();
+				}
 			},
 
 			updateNetwork: () => {
@@ -103,6 +105,14 @@ export default class Events {
 
 			mouseClick: (data) => {
 				this.entityManager.createBullet(data.x, data.y);
+
+				this.socket.emit('sendInstant', {
+					playerPosition: this.entityManager.getPlayerPosition(),
+					bulletDirection: {
+						x: data.x,
+						y: data.y
+					}
+				});
 			},
 
 			collision: (data) => {
@@ -112,6 +122,8 @@ export default class Events {
 				if (this.entityManager.isBullet(data.bodyB.uid)) {
 					this.entityManager.removeBullet(data.bodyB.uid);
 				}
+
+
 			}
 		};
 
@@ -185,6 +197,8 @@ export default class Events {
 			position: this.entityManager.getPlayerPosition()
 		};
 
+		this.bulletsToSend = [];
+
 		this.gameData = {
 			userData: {}
 		};
@@ -203,7 +217,14 @@ export default class Events {
 			this.events.getUpdate(data);
 		});
 
-
+		this.socket.on('sendInstant', (data) => {
+			this.entityManager.createOtherBullet(
+				data.playerPosition.x,
+				data.playerPosition.y,
+				data.bulletDirection.x,
+				data.bulletDirection.y
+			);
+		});
 
 
 

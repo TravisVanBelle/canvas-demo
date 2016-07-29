@@ -47,7 +47,7 @@ export default class Instance {
 
 		// Create socket
 		if (Consts.networking) {
-			this.socket = io('http://localhost:3000');
+			this.socket = io('http://localhost:3005');
 		}
 
 		// Register events

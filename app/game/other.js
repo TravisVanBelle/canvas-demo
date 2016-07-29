@@ -27,8 +27,6 @@ export default class Other {
 	}
 
 	setLocation(x, y){
-		console.log(x, y);
-		//console.log(this.element.state.pos);
 		this.element.state.pos.set(x, y);
 	}
 

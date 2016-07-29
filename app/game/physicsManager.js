@@ -24,14 +24,6 @@ export default class PhysicsManager {
 		}, this.registerWorld);
 	}
 
-	applyFriction() {
-		let bodies = this.world.getBodies();
-
-		bodies.forEach((body) => {
-			body.state.vel.set(body.state.vel.x * 0.9, body.state.vel.y * 0.9);
-		});
-	}
-
 	registerWorld(world) {
 		let viewWidth = 2000;
 		let viewHeight = 1000;
