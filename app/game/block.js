@@ -2,11 +2,14 @@ import Instance from '../instance';
 import PhysicsManager from '../physicsManager';
 import Consts from '../consts';
 
+/**
+ * A block on the map.
+ */
 export default class Block {
-	// i: Position from the top
-	// j: Position from the left
-	// width: The width of the block
-	// height: The height of the block
+	// i: Position from the top.
+	// j: Position from the left.
+	// width: The width of the block.
+	// height: The height of the block.
 	constructor(i, j, width, height){
 		this.size = {
 			width: width,

@@ -1,6 +1,18 @@
 import PhysicsManager from './physicsManager';
 
+/**
+ * A bullet object.
+ */
 export default class Bullet {
+	/**
+	 * Creates a bullet, adds it to the game, and accelerates it in
+	 * the calculated direction.
+	 *
+	 * posX: The x position to create the bullet.
+	 * posY: The y position to create the bullet.
+	 * dirX: The x component of the direction.
+	 * dirY: The y component of the direction.
+	 */
 	constructor(posX, posY, dirX, dirY) {
 		let diffX = dirX - posX;
 		let diffY = dirY - posY;
@@ -24,10 +36,16 @@ export default class Bullet {
 			new Physics.vector({x: percentX, y: percentY}));
 	}
 
+	/**
+	 * Adds the bullet to the game.
+	 */
 	draw() {
 		PhysicsManager.getPM().world.add(this.element);
 	}
 
+	/**
+	 * Removes the bullet from the game.
+	 */
 	undraw() {
 		PhysicsManager.getPM().world.remove(this.element);
 	}

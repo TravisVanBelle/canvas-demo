@@ -1,6 +1,9 @@
-import Block from './drawables/block';
+import Block from './block';
 import Instance from './instance';
 
+/**
+ * The game map object.
+ */
 export default class GMap {
 	constructor(){
 		this.mapJson = {
@@ -13,22 +16,22 @@ export default class GMap {
 			"content": [
 				"llllllllllllllllllllllllllllllllllllllll",
 				"l~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~l",
-				"l~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~l~~~~~l",
-				"l~~~~~llll~~~~~~~~~~~~~~~~~~~~~~~l~~~~~l",
-				"l~~~~~l~~~~~~~~~~~~~l~~~~~~~~~~~~l~~~~~l",
-				"l~~~~~l~~~~~~~~~~~~lll~~~~~~~~~~~l~~~~~l",
-				"l~~~~~l~~~~~~~~~~~~lll~~~~~~~~~~~lllll~l",
-				"l~~~~~~~~~~~~~~~~~~lll~~~~~~~~~~~~~~~~~l",
+				"l~s~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~s~l",
+				"l~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~l",
+				"l~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~l",
+				"l~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~l",
+				"l~~~~~~~~~~~~s~~~~~~~~~~~~~~~~~~~~~~~~~l",
 				"l~~~~~~~~~~~~~lllllllllllll~~~~~~~~~~~~l",
 				"l~~~~~~~~~~~~~lllllllllllll~~~~~~~~~~~~l",
 				"l~~~~~~~~~~~~~lllllllllllll~~~~~~~~~~~~l",
 				"l~~~~~~~~~~~~~lllllllllllll~~~~~~~~~~~~l",
 				"l~~~~~~~~~~~~~lllllllllllll~~~~~~~~~~~~l",
-				"l~lllll~~~~~~~~~~~~lll~~~~~~~~~~~l~~~~~l",
-				"l~~~~~l~~~~~~~~~~~~lll~~~~~~~~~~~l~~~~~l",
-				"l~~~~~l~~~~~~~~~~~~lll~~~~~~~~~~~l~~~~~l",
-				"l~~~~~l~~~~~~~~~~~~~l~~~~~~~~~llll~~~~~l",
-				"l~~~~~l~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~l",
+				"l~~~~~~~~~~~~~lllllllllllll~~~~~~~~~~~~l",
+				"l~~~~~~~~~~~~s~~~~~~~~~~~~~s~~~~~~~~~~~l",
+				"l~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~l",
+				"l~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~l",
+				"l~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~l",
+				"l~s~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~s~l",
 				"l~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~l",
 				"llllllllllllllllllllllllllllllllllllllll",
 			]
@@ -39,6 +42,8 @@ export default class GMap {
 
 		// List of actual blocks for displaying
 		this.blocks = [];
+
+		this.spawns = [];
 
 		let blockText = this.mapJson.content;
 
@@ -54,63 +59,27 @@ export default class GMap {
 					this.blockMap[i][j] = this.blocks[this.blocks.length-1];
 				}
 
+				if (blockText[i][j] === 's'){
+					this.spawns.push([i, j]);
+				}
+
 			}
 		}
 	}
 
+	/**
+	 * Draws the blocks on the canvas.
+	 */
 	drawMap(){
 		this.blocks.forEach(function (e) {
 			e.draw();
 		});
-
-		/*
-		for (let i=0; i<20; i++){
-			for (let j=0; j<40; j++){
-				let text = new createjs.Text(i + 'x' + j, "20px Arial", "#ff7700");
-				text.x = j*50+10;
-				text.y = i*50+30;
-				text.textBaseline = "alphabetic";
-				this.blocks[0].stage.addChild(text);
-			}
-		}*/
 	}
 
-	getSurroundingBlocks(x, y){
-		let xBlock = [];
-		let yBlock = [];
-
-		xBlock[0] = Math.ceil(x / this.mapJson.blockWidth);
-		xBlock[1] = xBlock[0] - 1;
-		xBlock[2] = xBlock[0] - 2;
-
-		yBlock[0] = Math.ceil(y / this.mapJson.blockHeight);
-		yBlock[1] = yBlock[0] - 1;
-		yBlock[2] = yBlock[0] - 2;
-
-		return {
-			xBlock, yBlock
-		};
-	}
-
-	checkMovementCollision(x, y){
-		let collision = false;
-
-		// We need to get the 6 blocks that the player may collide with
-		let { xBlock, yBlock } = this.getSurroundingBlocks(x, y);
-
-		for (let i=0; i<3; i++){
-			for (let j=0; j<3; j++){
-
-				// If no block, continue
-				if (!this.blockMap[yBlock[j]] || !this.blockMap[yBlock[j]][xBlock[i]]) {
-					continue;
-				}
-
-				// Otherwise, check for block collision
-				collision = collision || this.blockMap[yBlock[j]][xBlock[i]].checkCollision(x, y);
-			}
-		}
-
-		return collision;
+	/**
+	 * Returns the spawn points on the map.
+	 */
+	getSpawns() {
+		return this.spawns;
 	}
 }

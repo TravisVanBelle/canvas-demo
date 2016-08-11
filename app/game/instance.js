@@ -7,18 +7,14 @@ import _ from 'lodash/lodash';
 
 let instance = null;
 
+/**
+ * The game instance and entry point of the game.
+ */
 export default class Instance {
-	constructor(canvas){
-		if (!createjs) {
-			console.log('Createjs not defined');
-			return;
-		}
-
+	constructor(){
 		instance = this;
 
-		// Member variables
 		this.world = null;
-		this.canvas = null;
 		this.stage = null;
 		this.entityManager = null;
 		this.map = null;
@@ -30,31 +26,29 @@ export default class Instance {
 		};
 		this.socket = null;
 
-		this.canvas = canvas;
-
-		this.canvas.setAttribute('width', '2000px');
-		this.canvas.setAttribute('height', '1000px');
-
+		// Registers the physics manager.
 		this.physicsManager = new PhysicsManager();
 
-		// Draw map
+		// Creates and draws the map.
 		this.map = new GMap();
 		this.map.drawMap();
 
-		// Create Entity Manager
+		// Creates the entity manager and player object.
 		this.entityManager = new EntityManager();
 		this.entityManager.createPlayer();
 
-		// Create socket
+		// Create socket object for networking.
 		if (Consts.networking) {
 			this.socket = io('http://localhost:3005');
 		}
 
-		// Register events
+		// Register events.
 		this.events = new Events();
 	}
 
-
+	/**
+	 * Returns the instance object (singleton).
+	 */
 	static getInstance(){
 		if (!instance){
 			console.log('Instance not defined');
@@ -63,6 +57,9 @@ export default class Instance {
 		return instance;
 	}
 
+	/**
+	 * Returns the entity manager.
+	 */
 	static getEntityManager(){
 		if (!instance){
 			console.log('Instance not defined');

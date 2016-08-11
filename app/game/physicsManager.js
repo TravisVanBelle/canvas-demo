@@ -1,18 +1,23 @@
 let PM = null;
 
+/**
+ * The manager for the Physics library.
+ */
 export default class PhysicsManager {
+	/**
+	 * Creates the object and adds the necessary settings.
+	 */
 	constructor() {
 		PM = this;
 
-		// create a non-rotating circle
-		Physics.body('non-rotating-circle', 'circle', function( parent ){
+		Physics.body('non-rotating-circle', 'circle', function(parent){
 			return {
-				init: function( opts ){
-					parent.init.call( this, opts );
+				init: function(opts){
+					parent.init.call(this, opts);
 
 					Object.defineProperty(this.state.angular, 'pos', {
-						get: function(){ return 0; },
-						set: function(){}
+						get: function() { return 0; },
+						set: function() {}
 					});
 				}
 			};
@@ -24,6 +29,11 @@ export default class PhysicsManager {
 		}, this.registerWorld);
 	}
 
+	/**
+	 * The callback for the Physics engine.
+	 *
+	 * world: The new world for the game.
+	 */
 	registerWorld(world) {
 		let viewWidth = 2000;
 		let viewHeight = 1000;
@@ -32,15 +42,14 @@ export default class PhysicsManager {
 			el: 'viewport',
 			width: viewWidth,
 			height: viewHeight,
-			meta: false, // don't display meta data
+			meta: false,
 		});
 
 		renderer.el.width = viewWidth;
 		renderer.el.height = viewHeight;
 
-		// add the renderer
-		world.add( renderer );
-		// render on each step
+		world.add(renderer);
+
 		world.on('step', function(){
 			world.render();
 		});
@@ -56,7 +65,6 @@ export default class PhysicsManager {
 		}));
 
 		world.add( Physics.behavior('body-impulse-response') );
-		//world.add( Physics.behavior('constant-acceleration'));
 		world.add( Physics.behavior('body-collision-detection') );
 		world.add( Physics.behavior('sweep-prune') );
 
@@ -64,11 +72,13 @@ export default class PhysicsManager {
 		    renderer.el.width = 2000;
 		    renderer.el.height = 1000;
 
-		    // also resize the viewport edge detection bounds
 		    viewportBounds = Physics.aabb(0, 0, viewWidth, viewHeight);
 		}, true);
 	}
 
+	/**
+	 * Returns the physics manager object (singleton).
+	 */
 	static getPM() {
 		return PM;
 	}

@@ -2,6 +2,9 @@ import _ from 'lodash';
 
 export default {
 
+	/**
+	 * Generates a unique identifier.
+	 */
 	guid: () => {
 		function s4() {
 			return Math.floor((1 + Math.random()) * 0x10000)
@@ -13,6 +16,15 @@ export default {
 		s4() + '-' + s4() + s4() + s4();
 	},
 
+	/**
+	 * Compares two objects and returns the differences. Returns an array of
+	 * objects containing data about how the object was modified, with each
+	 * object having property 'type' one of 'added', 'removed', or 'diffed',
+	 * as well as the corresponding key and value.
+	 *
+	 * prev: The previous instance of an object.
+	 * curr: The current instance of an object.
+	 */
 	diff: (prev, curr) => {
 		let differences = [];
 
