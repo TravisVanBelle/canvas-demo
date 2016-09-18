@@ -22,7 +22,7 @@ export default class Events {
 		Physics.util.ticker.start();
 
 		// Register keypress events.
-		this.registerKeypressEvents();		
+		this.registerKeypressEvents();
 
 		// Register click events on canvas.
 		document.getElementById('viewport').onclick = (e) => {
@@ -60,7 +60,7 @@ export default class Events {
 		};
 
 		if (Consts.networking) {
-			registerNetworkEvents();
+			this.registerNetworkEvents();
 		}
 	}
 
@@ -165,7 +165,7 @@ export default class Events {
 	 * dt: The delta time since last the tick.
 	 */
 	tickHandler (time, dt) {
-		this.entityManager.applyFriction(); 
+		this.entityManager.applyFriction();
 		this.physicsManager.world.step(time);
 
 		if (this.instance.keys.d) this.entityManager.move(1, 0);
@@ -202,7 +202,7 @@ export default class Events {
 	 */
 	getUpdate (data) {
 		let diffs = Utils.diff(this.gameData.userData, data.userData);
-		
+
 		diffs.forEach((diff) => {
 			if (diff.value.uuid === this.socketData.uuid) return;
 

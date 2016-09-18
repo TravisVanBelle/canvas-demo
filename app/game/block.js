@@ -1,6 +1,6 @@
-import Instance from '../instance';
-import PhysicsManager from '../physicsManager';
-import Consts from '../consts';
+import Instance from './instance';
+import PhysicsManager from './physicsManager';
+import Consts from './consts';
 
 /**
  * A block on the map.
