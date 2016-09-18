@@ -1,11 +1,16 @@
-# Ember-client
+# Canvas with Sockets demo
 
-This README outlines the details of collaborating on this Ember application.
-A short introduction of this app could easily go here.
+An HTML5 Canvas demo with multiplayer networking. Uses [SocketSync](https://github.com/TravisVanBelle/socket-sync) as a library for Socket.io.
+
+Allows multiple users to move around and shoot bullets in an HTML5 Canvas.
+
+Made with:
+* [PhysicsJS](https://github.com/wellcaffeinated/PhysicsJS)
+* [Keypress](https://github.com/dmauro/Keypress/)
+* [Socket.io](https://github.com/socketio/socket.io)
+* Also uses [Ember](https://github.com/emberjs/ember.js/)
 
 ## Prerequisites
-
-You will need the following things properly installed on your computer.
 
 * [Git](http://git-scm.com/)
 * [Node.js](http://nodejs.org/) (with NPM)
@@ -15,39 +20,24 @@ You will need the following things properly installed on your computer.
 
 ## Installation
 
-* `git clone <repository-url>` this repository
-* change into the new directory
+Install the client:
+* Clone the repo: `git clone https://github.com/TravisVanBelle/canvas-demo`
+* Change into the new directory.
 * `npm install`
 * `bower install`
 
+Install the server:
+* Change back into the parent directory.
+* Clone the repo: `git clone https://github.com/TravisVanBelle/socket-sync`
+* Change into the new directory.
+* `npm install`
+
+
 ## Running / Development
 
+In the `socket-sync` directory:
+* `node index` (or `node --use-strict index` if that fails)
+
+In the `canvas-demo` directory
 * `ember server`
-* Visit your app at [http://localhost:4200](http://localhost:4200).
-
-### Code Generators
-
-Make use of the many generators for code, try `ember help generate` for more details
-
-### Running Tests
-
-* `ember test`
-* `ember test --server`
-
-### Building
-
-* `ember build` (development)
-* `ember build --environment production` (production)
-
-### Deploying
-
-Specify what it takes to deploy your app.
-
-## Further Reading / Useful Links
-
-* [ember.js](http://emberjs.com/)
-* [ember-cli](http://ember-cli.com/)
-* Development Browser Extensions
-  * [ember inspector for chrome](https://chrome.google.com/webstore/detail/ember-inspector/bmdblncegkenkacieihfhpjfppoconhi)
-  * [ember inspector for firefox](https://addons.mozilla.org/en-US/firefox/addon/ember-inspector/)
-
+* Go to [http://localhost:4200/play](http://localhost:4200/play).
