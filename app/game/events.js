@@ -76,11 +76,11 @@ export default class Events {
 			this.socket.emit('join', this.socketData);
 		});
 
-		this.socket.on('clientUpdate', (data) => {
+		this.socket.on('getUpdate', (data) => {
 			this.getUpdate(data);
 		});
 
-		this.socket.on('sendInstant', (data) => {
+		this.socket.on('getInstant', (data) => {
 			this.entityManager.createBullet(
 				data.playerPosition.x,
 				data.playerPosition.y,
@@ -192,7 +192,7 @@ export default class Events {
 	 */
 	updateNetwork () {
 		if (!this.socket) return;
-		this.socket.emit('serverUpdate', this.socketData);
+		this.socket.emit('sendUpdate', this.socketData);
 	}
 
 	/**
